@@ -1,71 +1,46 @@
-import java.util.*;
 
-/**
- * UC12: Strategy Pattern for Palindrome Algorithms
- * Demonstrates Polymorphism and Dynamic Strategy Injection.
- */
-
-// 1. The Strategy Interface
-interface PalindromeStrategy {
-    boolean isValid(String input);
-}
-
-// 2. Concrete Strategy A: Stack-based (LIFO)
-class StackStrategy implements PalindromeStrategy {
-    @Override
-    public boolean isValid(String input) {
-        String clean = input.toLowerCase().replaceAll("[^a-z0-9]", "");
-        Stack<Character> stack = new Stack<>();
-        for (char c : clean.toCharArray()) stack.push(c);
-
-        StringBuilder reversed = new StringBuilder();
-        while (!stack.isEmpty()) reversed.append(stack.pop());
-
-        return clean.equals(reversed.toString());
-    }
-}
-
-// 3. Concrete Strategy B: Deque-based (Front/Rear)
-class DequeStrategy implements PalindromeStrategy {
-    @Override
-    public boolean isValid(String input) {
-        String clean = input.toLowerCase().replaceAll("[^a-z0-9]", "");
-        Deque<Character> deque = new ArrayDeque<>();
-        for (char c : clean.toCharArray()) deque.addLast(c);
-
-        while (deque.size() > 1) {
-            if (deque.removeFirst() != deque.removeLast()) return false;
-        }
-        return true;
-    }
-}
-
-// 4. Context Class: The "Manager" that uses the strategy
-class PalindromeContext {
-    private PalindromeStrategy strategy;
-
-    public void setStrategy(PalindromeStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public boolean executeStrategy(String input) {
-        return strategy.isValid(input);
-    }
-}
 public class PalindromeCheckerApp
 {
 
     public static void main(String args[])
     {
-        PalindromeContext context = new PalindromeContext();
-        String testWord = "Racecar";
+        // Using a long string to make the performance difference noticeable
+        String testInput = "A man a plan a canal Panama".repeat(100).toLowerCase().replaceAll("[^a-z0-9]", "");
 
-        // Injecting Stack Strategy at runtime
-        context.setStrategy(new StackStrategy());
-        System.out.println("Using Stack Strategy: " + context.executeStrategy(testWord));
+        System.out.println("Benchmarking Palindrome Algorithms (Length: " + testInput.length() + " chars)\n");
 
-        // Dynamically switching to Deque Strategy
-        context.setStrategy(new DequeStrategy());
-        System.out.println("Using Deque Strategy: " + context.executeStrategy(testWord));
+        // 1. Measure String Reversal Approach (UC3 style)
+        long start1 = System.nanoTime();
+        boolean res1 = checkByReversal(testInput);
+        long end1 = System.nanoTime();
+        System.out.println("Approach: String Reversal | Time: " + (end1 - start1) + " ns | Result: " + res1);
+
+        // 2. Measure Two-Pointer Approach (UC4 style)
+        long start2 = System.nanoTime();
+        boolean res2 = checkByTwoPointers(testInput);
+        long end2 = System.nanoTime();
+        System.out.println("Approach: Two-Pointer     | Time: " + (end2 - start2) + " ns | Result: " + res2);
+
+        System.out.println("\nNote: Two-Pointer is usually faster because it stops at the first mismatch.");
+    }
+
+    // UC3 Logic: Full Reversal (Slower due to String immutability/memory)
+    private static boolean checkByReversal(String str) {
+        String reversed = "";
+        for (int i = str.length() - 1; i >= 0; i--) {
+            reversed += str.charAt(i);
+        }
+        return str.equals(reversed);
+    }
+
+    // UC4 Logic: Two-Pointer (Faster due to early exit and no extra memory)
+    private static boolean checkByTwoPointers(String str) {
+        int left = 0, right = str.length() - 1;
+        while (left < right) {
+            if (str.charAt(left) != str.charAt(right)) return false;
+            left++;
+            right--;
+        }
+        return true;
     }
 }
