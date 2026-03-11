@@ -1,71 +1,38 @@
-class Node {
-    char data;
-    Node next;
-    Node(char data) { this.data = data; }
-}
+
 public class PalindromeCheckerApp
 {
 
     public static void main(String args[])
     {
-        String input = "rotator";
-        Node head = createLinkedList(input);
+        String input = "malayalam";
 
-        if (isPalindrome(head)) {
+        // Initial call to the recursive function
+        // We pass the string, the start index (0), and the end index (length - 1)
+        boolean result = isPalindrome(input, 0, input.length() - 1);
+
+        if (result) {
             System.out.println("The string \"" + input + "\" is a Palindrome.");
         } else {
             System.out.println("The string \"" + input + "\" is NOT a Palindrome.");
         }
     }
 
-    // Function to check if Linked List is palindrome
-    public static boolean isPalindrome(Node head) {
-        if (head == null || head.next == null) return true;
-
-        // 1. Find the middle using Fast and Slow pointers
-        Node slow = head;
-        Node fast = head;
-        while (fast != null && fast.next != null) {
-            slow = slow.next;
-            fast = fast.next.next;
+    /**
+     * Recursive method to check palindrome
+     */
+    public static boolean isPalindrome(String str, int start, int end) {
+        // 1. Base Condition: If pointers cross or meet, all checks passed
+        if (start >= end) {
+            return true;
         }
 
-        // 2. Reverse the second half of the list in-place
-        Node secondHalf = reverseList(slow);
-        Node firstHalf = head;
-
-        // 3. Compare the two halves
-        Node temp = secondHalf; // To restore later if needed
-        while (secondHalf != null) {
-            if (firstHalf.data != secondHalf.data) return false;
-            firstHalf = firstHalf.next;
-            secondHalf = secondHalf.next;
+        // 2. Comparison: Check if characters at current boundaries match
+        if (str.charAt(start) != str.charAt(end)) {
+            return false;
         }
-        return true;
-    }
 
-    // Helper to reverse a linked list
-    private static Node reverseList(Node head) {
-        Node prev = null;
-        Node curr = head;
-        while (curr != null) {
-            Node nextNode = curr.next;
-            curr.next = prev;
-            prev = curr;
-            curr = nextNode;
-        }
-        return prev;
-    }
-
-    // Helper to convert String to Linked List
-    private static Node createLinkedList(String s) {
-        if (s.isEmpty()) return null;
-        Node head = new Node(s.charAt(0));
-        Node current = head;
-        for (int i = 1; i < s.length(); i++) {
-            current.next = new Node(s.charAt(i));
-            current = current.next;
-        }
-        return head;
+        // 3. Recursive Call: Move inward and solve the smaller sub-problem
+        // This pushes a new frame onto the Call Stack
+        return isPalindrome(str, start + 1, end - 1);
     }
 }
