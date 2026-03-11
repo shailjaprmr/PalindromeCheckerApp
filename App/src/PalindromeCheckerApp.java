@@ -16,7 +16,6 @@ public class PalindromeCheckerApp
                 // We start from the last index (length - 1) and move to index 0
                 for (int i = original.length() - 1; i >= 0; i--) {
                     // 3. String Concatenation (+): Building the reversed string
-                    // Note: Because Strings are Immutable, each '+' creates a new object in memory
                     reversed = reversed + original.charAt(i);
                 }
 
