@@ -1,38 +1,55 @@
+import java.util.*;
+
 /**
- * UC11: Object-Oriented Palindrome Service
- * Demonstrates Encapsulation and the Single Responsibility Principle.
+ * UC12: Strategy Pattern for Palindrome Algorithms
+ * Demonstrates Polymorphism and Dynamic Strategy Injection.
  */
 
-// 1. Service Class: Encapsulates the Palindrome Logic
-class PalindromeService {
+// 1. The Strategy Interface
+interface PalindromeStrategy {
+    boolean isValid(String input);
+}
 
-    /**
-     * Public method to expose the palindrome checking functionality.
-     * This follows the principle of Encapsulation.
-     */
-    public boolean check(String input) {
-        if (input == null || input.isEmpty()) {
-            return false;
-        }
+// 2. Concrete Strategy A: Stack-based (LIFO)
+class StackStrategy implements PalindromeStrategy {
+    @Override
+    public boolean isValid(String input) {
+        String clean = input.toLowerCase().replaceAll("[^a-z0-9]", "");
+        Stack<Character> stack = new Stack<>();
+        for (char c : clean.toCharArray()) stack.push(c);
 
-        // Internal Data Structure: Using a simple char array approach
-        String cleanInput = input.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
-        return isPalindromeLogic(cleanInput);
+        StringBuilder reversed = new StringBuilder();
+        while (!stack.isEmpty()) reversed.append(stack.pop());
+
+        return clean.equals(reversed.toString());
     }
+}
 
-    // Private helper method: Internal implementation hidden from the user
-    private boolean isPalindromeLogic(String text) {
-        int left = 0;
-        int right = text.length() - 1;
+// 3. Concrete Strategy B: Deque-based (Front/Rear)
+class DequeStrategy implements PalindromeStrategy {
+    @Override
+    public boolean isValid(String input) {
+        String clean = input.toLowerCase().replaceAll("[^a-z0-9]", "");
+        Deque<Character> deque = new ArrayDeque<>();
+        for (char c : clean.toCharArray()) deque.addLast(c);
 
-        while (left < right) {
-            if (text.charAt(left) != text.charAt(right)) {
-                return false;
-            }
-            left++;
-            right--;
+        while (deque.size() > 1) {
+            if (deque.removeFirst() != deque.removeLast()) return false;
         }
         return true;
+    }
+}
+
+// 4. Context Class: The "Manager" that uses the strategy
+class PalindromeContext {
+    private PalindromeStrategy strategy;
+
+    public void setStrategy(PalindromeStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public boolean executeStrategy(String input) {
+        return strategy.isValid(input);
     }
 }
 public class PalindromeCheckerApp
@@ -40,19 +57,15 @@ public class PalindromeCheckerApp
 
     public static void main(String args[])
     {
-        // Creating an instance of the service class
-        PalindromeService service = new PalindromeService();
+        PalindromeContext context = new PalindromeContext();
+        String testWord = "Racecar";
 
-        String testString = "No 'x' in Nixon";
+        // Injecting Stack Strategy at runtime
+        context.setStrategy(new StackStrategy());
+        System.out.println("Using Stack Strategy: " + context.executeStrategy(testWord));
 
-        // Using the encapsulated method
-        boolean result = service.check(testString);
-
-        System.out.println("Testing Phrase: " + testString);
-        if (result) {
-            System.out.println("Verdict: Valid Palindrome.");
-        } else {
-            System.out.println("Verdict: Not a Palindrome.");
-        }
+        // Dynamically switching to Deque Strategy
+        context.setStrategy(new DequeStrategy());
+        System.out.println("Using Deque Strategy: " + context.executeStrategy(testWord));
     }
 }
