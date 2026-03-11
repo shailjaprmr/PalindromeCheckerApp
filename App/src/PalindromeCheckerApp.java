@@ -3,17 +3,11 @@ public class PalindromeCheckerApp
 
     public static void main(String args[])
     {
-        For UC3, the focus shifts to understanding how strings are manipulated at a character level. Instead of using built-in library functions like StringBuilder.reverse(), you will manually construct the reversed string using a for loop and string concatenation.
-
-        Java Implementation: UseCase3PalindromeCheckerApp.java
-            Java
 /**
  * UC3: Palindrome Check Using String Reverse (Manual Loop)
  * This program demonstrates manual string reversal to check for a palindrome.
  */
-        public class UseCase3PalindromeCheckerApp {
 
-            public static void main(String[] args) {
                 // 1. Define the input string
                 String original = "level";
                 String reversed = ""; // Initializing an empty string to hold the result
