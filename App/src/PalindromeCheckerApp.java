@@ -4,35 +4,42 @@ public class PalindromeCheckerApp
 
     public static void main(String args[])
     {
-        String input = "malayalam";
+        // Test with a phrase containing spaces and mixed casing
+        String input = "A man a plan a canal Panama";
 
-        // Initial call to the recursive function
-        // We pass the string, the start index (0), and the end index (length - 1)
-        boolean result = isPalindrome(input, 0, input.length() - 1);
+        // 1. String Preprocessing: Normalization
+        // .toLowerCase() handles case-insensitivity
+        // .replaceAll("[^a-zA-Z0-9]", "") removes spaces, commas, and special characters
+        String normalized = input.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
 
-        if (result) {
-            System.out.println("The string \"" + input + "\" is a Palindrome.");
+        // 2. Apply Palindrome Logic (Two-Pointer approach for efficiency)
+        boolean isPalindrome = checkPalindrome(normalized);
+
+        // 3. Display Result
+        System.out.println("Original: \"" + input + "\"");
+        System.out.println("Normalized: \"" + normalized + "\"");
+
+        if (isPalindrome) {
+            System.out.println("Result: It is a Palindrome!");
         } else {
-            System.out.println("The string \"" + input + "\" is NOT a Palindrome.");
+            System.out.println("Result: It is NOT a Palindrome.");
         }
     }
 
     /**
-     * Recursive method to check palindrome
+     * Helper method using Two-Pointer technique
      */
-    public static boolean isPalindrome(String str, int start, int end) {
-        // 1. Base Condition: If pointers cross or meet, all checks passed
-        if (start >= end) {
-            return true;
-        }
+    private static boolean checkPalindrome(String str) {
+        int left = 0;
+        int right = str.length() - 1;
 
-        // 2. Comparison: Check if characters at current boundaries match
-        if (str.charAt(start) != str.charAt(end)) {
-            return false;
+        while (left < right) {
+            if (str.charAt(left) != str.charAt(right)) {
+                return false;
+            }
+            left++;
+            right--;
         }
-
-        // 3. Recursive Call: Move inward and solve the smaller sub-problem
-        // This pushes a new frame onto the Call Stack
-        return isPalindrome(str, start + 1, end - 1);
+        return true;
     }
 }
