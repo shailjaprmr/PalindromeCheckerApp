@@ -1,44 +1,41 @@
+import java.util.ArrayDeque;
+import java.util.Deque;
 public class PalindromeCheckerApp
 {
 
     public static void main(String args[])
     {
-        String input = "deified";
+        String input = "racecar";
 
-        // 1. Data Structures: Initialize Stack (LIFO) and Queue (FIFO)
-        // Note: Queue is an interface in Java, so we use LinkedList as the implementation
-        Stack<Character> stack = new Stack<>();
-        Queue<Character> queue = new LinkedList<>();
+        // 1. Data Structure: Initialize a Deque
+        // ArrayDeque is usually faster than LinkedList for Stack/Queue operations
+        Deque<Character> deque = new ArrayDeque<>();
 
-        // 2. Enqueue and Push Operations: Insert each character into both structures
+        // 2. Insert characters into the deque
         for (int i = 0; i < input.length(); i++) {
-            char ch = input.charAt(i);
-            stack.push(ch);   // Adds to top
-            queue.add(ch);    // Adds to end (Enqueue)
+            deque.addLast(input.charAt(i));
         }
 
 
 
         boolean isPalindrome = true;
 
-        // 3. Logical Comparison: Dequeue from Queue and Pop from Stack
-        // If the word is a palindrome, the first-in (Queue) will match the last-in (Stack)
-        while (!stack.isEmpty()) {
-            char fromStack = stack.pop();    // Returns characters in Reverse order
-            char fromQueue = queue.remove(); // Returns characters in Original order (Dequeue)
+        // 3. Remove first & last characters and compare until empty or 1 remains
+        while (deque.size() > 1) {
+            char front = deque.removeFirst();
+            char rear = deque.removeLast();
 
-            if (fromStack != fromQueue) {
+            if (front != rear) {
                 isPalindrome = false;
                 break;
             }
         }
 
-        // 4. Print Result
+        // 4. Print result
         if (isPalindrome) {
-            System.out.println("The string \"" + input + "\" is a Palindrome.");
+            System.out.println("The word \"" + input + "\" is a Palindrome.");
         } else {
-            System.out.println("The string \"" + input + "\" is NOT a Palindrome.");
+            System.out.println("The word \"" + input + "\" is NOT a Palindrome.");
         }
-
     }
 }
